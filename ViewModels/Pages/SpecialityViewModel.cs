@@ -85,13 +85,16 @@ namespace DdApp.ViewModels.Pages
         {
             SaveCurrentForm(Index);
 
-            var createItems = Specialties.Where(item => !item.Deleted & item.New).Select(item => item.Value).ToList();
+            var createItems = Specialties.Where(item => !item.Deleted & item.Created).Select(item => item.Value)
+                .ToList();
             DbContext.AddRange(createItems);
 
-            var deleteItems = Specialties.Where(item => item.Deleted & !item.New).Select(item => item.Value).ToList();
+            var deleteItems = Specialties.Where(item => item.Deleted & !item.Created).Select(item => item.Value)
+                .ToList();
             DbContext.Specialties.RemoveRange(deleteItems);
 
-            var updateItems = Specialties.Where(item => !item.Deleted & !item.New).Select(item => item.Value).ToList();
+            var updateItems = Specialties.Where(item => !item.Deleted & !item.Created).Select(item => item.Value)
+                .ToList();
             DbContext.UpdateRange(updateItems);
             DbContext.SaveChanges();
 
@@ -100,7 +103,7 @@ namespace DdApp.ViewModels.Pages
 
         private void Update()
         {
-            Specialties = DbContext.Specialties.Select((sp) => new Item<Specialty> { Value = sp })
+            Specialties = DbContext.Specialties.Select((sp) => new Item<Specialty>(sp))
                 .ToObservableCollection();
         }
 
@@ -110,7 +113,7 @@ namespace DdApp.ViewModels.Pages
             if (!Name.IsNullOrEmpty() || !Description.IsNullOrEmpty())
             {
                 Specialties.Add(new Item<Specialty>
-                    { New = true, Value = new Specialty { Name = Name, Description = Description } });
+                    (new Specialty { Name = Name, Description = Description }));
             }
 
             Index = Specialties.Count - 1;
@@ -136,12 +139,10 @@ namespace DdApp.ViewModels.Pages
         private void SaveCurrentForm(int index)
         {
             var specialty = Specialties.ElementAtOrDefault(index);
-            if (specialty != null)
-            {
-                specialty.Deleted = Deleted;
-                specialty.Value.Name = Name;
-                specialty.Value.Description = Description;
-            }
+            if (specialty == null) return;
+            specialty.Deleted = Deleted;
+            specialty.Value.Name = Name;
+            specialty.Value.Description = Description;
         }
 
         private void SetValueFromItem(Item<Specialty>? value)
