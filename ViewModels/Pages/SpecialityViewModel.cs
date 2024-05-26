@@ -103,7 +103,7 @@ namespace DdApp.ViewModels.Pages
 
         private void Update()
         {
-            Specialties = DbContext.Specialties.Select((sp) => new Item<Specialty>(sp))
+            Specialties = DbContext.Specialties.Select((sp) => new Item<Specialty>(sp, false))
                 .ToObservableCollection();
         }
 
@@ -113,7 +113,7 @@ namespace DdApp.ViewModels.Pages
             if (!Name.IsNullOrEmpty() || !Description.IsNullOrEmpty())
             {
                 Specialties.Add(new Item<Specialty>
-                    (new Specialty { Name = Name, Description = Description }));
+                    (new Specialty { Name = Name, Description = Description }, true));
             }
 
             Index = Specialties.Count - 1;

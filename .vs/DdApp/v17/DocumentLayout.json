@@ -1,12 +1,58 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "S:\\Code\\C#\\DbApp\\DdApp\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{615175C4-ECD4-4E23-880D-4048D58A5BE2}|DdApp.csproj|s:\\code\\c#\\dbapp\\ddapp\\views\\pages\\forms\\studentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{615175C4-ECD4-4E23-880D-4048D58A5BE2}|DdApp.csproj|solutionrelative:views\\pages\\forms\\studentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{615175C4-ECD4-4E23-880D-4048D58A5BE2}|DdApp.csproj|s:\\code\\c#\\dbapp\\ddapp\\styles\\longupdown.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{615175C4-ECD4-4E23-880D-4048D58A5BE2}|DdApp.csproj|solutionrelative:styles\\longupdown.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "StudentPage.xaml",
+              "DocumentMoniker": "S:\\Code\\C#\\DbApp\\DdApp\\Views\\Pages\\Forms\\StudentPage.xaml",
+              "RelativeDocumentMoniker": "Views\\Pages\\Forms\\StudentPage.xaml",
+              "ToolTip": "S:\\Code\\C#\\DbApp\\DdApp\\Views\\Pages\\Forms\\StudentPage.xaml",
+              "RelativeToolTip": "Views\\Pages\\Forms\\StudentPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-05-26T09:05:40.069Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "LongUpDown.xaml",
+              "DocumentMoniker": "S:\\Code\\C#\\DbApp\\DdApp\\Styles\\LongUpDown.xaml",
+              "RelativeDocumentMoniker": "Styles\\LongUpDown.xaml",
+              "ToolTip": "S:\\Code\\C#\\DbApp\\DdApp\\Styles\\LongUpDown.xaml",
+              "RelativeToolTip": "Styles\\LongUpDown.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-05-26T09:10:36.441Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -129,8 +129,8 @@ public partial class StudentsDbContext : DbContext
 
         modelBuilder.Entity<Grades>(entity =>
         {
+            entity.HasKey(e => e.Code);
             entity
-                .HasNoKey()
                 .ToTable("Оценки", tb =>
                 {
                     tb.HasTrigger("Индикатор добавления оценки");
@@ -138,6 +138,7 @@ public partial class StudentsDbContext : DbContext
                     tb.HasTrigger("Индикатор удаления оценки");
                 });
 
+            entity.Property(e => e.Code).HasColumnName("Код оценок");
             entity.Property(e => e.ExamDate1).HasColumnName("Дата экзамена 1");
             entity.Property(e => e.ExamDate2).HasColumnName("Дата экзамена 2");
             entity.Property(e => e.ExamDate3).HasColumnName("Дата экзамена 3");

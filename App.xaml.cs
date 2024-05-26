@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using DdApp.Context;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ namespace DdApp
     /// </summary>
     public partial class App
     {
+        [DllImport("Kernel32.dll")]
+        public static extern bool AttachConsole(int processId);
         // The.NET Generic Host provides dependency injection, configuration, logging, and other services.
         // https://docs.microsoft.com/dotnet/core/extensions/generic-host
         // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
@@ -55,6 +58,8 @@ namespace DdApp
                 // Service containing navigation, same as INavigationWindow... but without window
                 services.AddSingleton<INavigationService, NavigationService>();
 
+                services.AddSingleton<ISnackbarService, SnackbarService>();
+
                 // Main window with navigation
                 services.AddSingleton<INavigationWindow, MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
@@ -66,6 +71,15 @@ namespace DdApp
 
                 services.AddSingleton<SpecialityPage>();
                 services.AddSingleton<SpecialityViewModel>();
+                
+                services.AddSingleton<StudentPage>();
+                services.AddSingleton<StudentViewModel>();
+                
+                services.AddSingleton<SubjectPage>();
+                services.AddSingleton<SubjectViewModel>();
+                
+                services.AddSingleton<GradesPage>();
+                services.AddSingleton<GradesViewModel>();
             }).Build();
 
         /// <summary>
@@ -85,6 +99,9 @@ namespace DdApp
         private void OnStartup(object sender, StartupEventArgs e)
         {
             _host.Start();
+            
+            AttachConsole(-1);
+            Console.WriteLine("Start");
         }
 
         /// <summary>
@@ -95,6 +112,7 @@ namespace DdApp
             await _host.StopAsync();
 
             _host.Dispose();
+            Shutdown(0);
         }
 
         /// <summary>

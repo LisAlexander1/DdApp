@@ -28,7 +28,7 @@
         </Grid.RowDefinitions>
         <ui:NavigationView
             BreadcrumbBar="{Binding ElementName=BreadcrumbBar}"
-            FontSize="10"
+            FontSize="5"
             FooterMenuItemsSource="{Binding ViewModel.FooterMenuItems, Mode=OneWay}"
             FrameMargin="0"
             Grid.Row="1"
@@ -36,7 +36,7 @@
             IsPaneToggleVisible="True"
             MenuItemsSource="{Binding ViewModel.MenuItems, Mode=OneWay}"
             Padding="42,0,42,0"
-            PaneDisplayMode="LeftFluent"
+            PaneDisplayMode="Left"
             x:Name="RootNavigation">
             <ui:NavigationView.Header>
                 <!--  <ui:BreadcrumbBar  -->

@@ -1,0 +1,336 @@
+﻿<Page
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
+    Title="GradesPage"
+    d:DataContext="{d:DesignInstance local:GradesPage,
+                                     IsDesignTimeCreatable=False}"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    x:Class="DdApp.Views.Pages.GradesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entities="clr-namespace:DdApp.Entities"
+    xmlns:helpers="clr-namespace:DdApp.Helpers"
+    xmlns:local="clr-namespace:DdApp.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:userControls="clr-namespace:DdApp.Views.Pages.UserControls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
+
+    <Page.Resources>
+        <helpers:DateOnlyToDateTimeConverter x:Key="DateOnlyToDateTimeConverter" />
+        <helpers:IntToDoubleConverter x:Key="IntToDoubleConverter" />
+        <helpers:LongToDoubleConverter x:Key="LongToDoubleConverter" />
+    </Page.Resources>
+    <Grid VerticalAlignment="Top">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <userControls:FormControl
+            AddCommand="{Binding ViewModel.AddCommand}"
+            Count="{Binding ViewModel.ItemsList.Count}"
+            CreateCommand="{Binding ViewModel.CreateCommand}"
+            DecreaseIndexCommand="{Binding ViewModel.DecreaseIndexCommand}"
+            DeleteCommand="{Binding ViewModel.DeleteCommand}"
+            FirstIndexCommand="{Binding ViewModel.FirstIndexCommand}"
+            Grid.Row="0"
+            IncreaseIndexCommand="{Binding ViewModel.IncreaseIndexCommand}"
+            Index="{Binding ViewModel.Index}"
+            IsCreateForm="{Binding ViewModel.IsCreateForm}"
+            IsDeleteItem="{Binding ViewModel.IsDeleteItem}"
+            LastIndexCommand="{Binding ViewModel.LastIndexCommand}"
+            Loading="{Binding ViewModel.Saving}"
+            SaveCommand="{Binding ViewModel.SaveCommand}"
+            Title="Оценки" />
+
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="10,10,20,10">
+                <Label Content="Студент" />
+                <ComboBox
+                    ItemsSource="{Binding ViewModel.Students}"
+                    Margin="0,0,0,10"
+                    SelectedValue="{Binding ViewModel.StudentCode}"
+                    SelectedValuePath="Code">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type entities:Student}">
+                            <TextBlock Text="{Binding FullName}" ToolTipService.ToolTip="{Binding Group}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Separator />
+                <ui:TextBlock
+                    FontTypography="BodyStrong"
+                    Margin="0,10"
+                    Text="Первый предмет" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label
+                        Content="Предмет"
+                        Grid.Column="0"
+                        Grid.Row="0" />
+                    <ComboBox
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        ItemsSource="{Binding ViewModel.Subjects}"
+                        Margin="0,0,5,10"
+                        SelectedValue="{Binding ViewModel.SubjectCode1}"
+                        SelectedValuePath="Code">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type entities:Subject}">
+                                <TextBlock ToolTipService.ToolTip="{Binding Description}">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}({0}) {1}">
+                                            <Binding Path="Code" />
+                                            <Binding Path="Name" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Label
+                        Content="Оценка"
+                        Grid.Column="1"
+                        Grid.Row="0"
+                        Margin="5,0,5,0" />
+                    <ComboBox
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Margin="5,0,5,10"
+                        SelectedItem="{Binding ViewModel.Grade1}">
+                        <system:Byte>2</system:Byte>
+                        <system:Byte>3</system:Byte>
+                        <system:Byte>4</system:Byte>
+                        <system:Byte>5</system:Byte>
+                    </ComboBox>
+
+                    <Label
+                        Content="Дата проведения"
+                        Grid.Column="2"
+                        Grid.Row="0"
+                        Margin="5,0,5,0" />
+                    <DatePicker
+                        DisplayDate="{x:Static system:DateTime.Today}"
+                        DisplayDateEnd="{x:Static system:DateTime.Today}"
+                        Grid.Column="2"
+                        Grid.Row="1"
+                        Margin="5,0,5,10"
+                        SelectedDate="{Binding ViewModel.ExamDate1, Converter={StaticResource DateOnlyToDateTimeConverter}}" />
+                    <ui:Button
+                        Appearance="Transparent"
+                        Command="{Binding ViewModel.ClearExamCommand}"
+                        Grid.Column="3"
+                        Grid.Row="1"
+                        Margin="5,0,0,10"
+                        VerticalAlignment="Stretch">
+                        <ui:Button.CommandParameter>
+                            <system:Int32>1</system:Int32>
+                        </ui:Button.CommandParameter>
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Dismiss24" />
+                        </ui:Button.Icon>
+                    </ui:Button>
+                </Grid>
+
+                <Separator />
+                <ui:TextBlock
+                    FontTypography="BodyStrong"
+                    Margin="0,10"
+                    Text="Второй предмет" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label
+                        Content="Предмет"
+                        Grid.Column="0"
+                        Grid.Row="0" />
+                    <ComboBox
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        ItemsSource="{Binding ViewModel.Subjects}"
+                        Margin="0,0,5,10"
+                        SelectedValue="{Binding ViewModel.SubjectCode2}"
+                        SelectedValuePath="Code">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type entities:Subject}">
+                                <TextBlock ToolTipService.ToolTip="{Binding Description}">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}({0}) {1}">
+                                            <Binding Path="Code" />
+                                            <Binding Path="Name" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Label
+                        Content="Оценка"
+                        Grid.Column="1"
+                        Grid.Row="0"
+                        Margin="5,0,5,0" />
+                    <ComboBox
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Margin="5,0,5,10"
+                        SelectedItem="{Binding ViewModel.Grade2}">
+                        <system:Byte>2</system:Byte>
+                        <system:Byte>3</system:Byte>
+                        <system:Byte>4</system:Byte>
+                        <system:Byte>5</system:Byte>
+                    </ComboBox>
+
+                    <Label
+                        Content="Дата проведения"
+                        Grid.Column="2"
+                        Grid.Row="0"
+                        Margin="5,0,5,0" />
+                    <DatePicker
+                        DisplayDate="{x:Static system:DateTime.Today}"
+                        DisplayDateEnd="{x:Static system:DateTime.Today}"
+                        Grid.Column="2"
+                        Grid.Row="1"
+                        Margin="5,0,5,10"
+                        SelectedDate="{Binding ViewModel.ExamDate2, Converter={StaticResource DateOnlyToDateTimeConverter}}" />
+                    <ui:Button
+                        Appearance="Transparent"
+                        Command="{Binding ViewModel.ClearExamCommand}"
+                        Grid.Column="3"
+                        Grid.Row="1"
+                        Margin="5,0,0,10"
+                        VerticalAlignment="Stretch">
+                        <ui:Button.CommandParameter>
+                            <system:Int32>2</system:Int32>
+                        </ui:Button.CommandParameter>
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Dismiss24" />
+                        </ui:Button.Icon>
+                    </ui:Button>
+                </Grid>
+
+                <Separator />
+                <ui:TextBlock
+                    FontTypography="BodyStrong"
+                    Margin="0,10"
+                    Text="Третий предмет" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label
+                        Content="Предмет"
+                        Grid.Column="0"
+                        Grid.Row="0" />
+                    <ComboBox
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        ItemsSource="{Binding ViewModel.Subjects}"
+                        Margin="0,0,5,10"
+                        SelectedValue="{Binding ViewModel.SubjectCode3}"
+                        SelectedValuePath="Code">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type entities:Subject}">
+                                <TextBlock ToolTipService.ToolTip="{Binding Description}">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}({0}) {1}">
+                                            <Binding Path="Code" />
+                                            <Binding Path="Name" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Label
+                        Content="Оценка"
+                        Grid.Column="1"
+                        Grid.Row="0"
+                        Margin="5,0,5,0" />
+                    <ComboBox
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Margin="5,0,5,10"
+                        SelectedItem="{Binding ViewModel.Grade3}">
+                        <system:Byte>2</system:Byte>
+                        <system:Byte>3</system:Byte>
+                        <system:Byte>4</system:Byte>
+                        <system:Byte>5</system:Byte>
+                    </ComboBox>
+
+                    <Label
+                        Content="Дата проведения"
+                        Grid.Column="2"
+                        Grid.Row="0"
+                        Margin="5,0,5,0" />
+                    <DatePicker
+                        DisplayDate="{x:Static system:DateTime.Today}"
+                        DisplayDateEnd="{x:Static system:DateTime.Today}"
+                        Grid.Column="2"
+                        Grid.Row="1"
+                        Margin="5,0,5,10"
+                        SelectedDate="{Binding ViewModel.ExamDate3, Converter={StaticResource DateOnlyToDateTimeConverter}}" />
+                    <ui:Button
+                        Appearance="Transparent"
+                        Command="{Binding ViewModel.ClearExamCommand}"
+                        Grid.Column="3"
+                        Grid.Row="1"
+                        Margin="5,0,0,10"
+                        VerticalAlignment="Stretch">
+                        <ui:Button.CommandParameter>
+                            <system:Int32>3</system:Int32>
+                        </ui:Button.CommandParameter>
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Dismiss24" />
+                        </ui:Button.Icon>
+                    </ui:Button>
+                </Grid>
+                <Separator />
+                <Label Content="Средний балл" Margin="0,10,0,0" />
+                <xctk:DoubleUpDown
+                    FormatString="{}{0:F2}"
+                    IsEnabled="False"
+                    IsReadOnly="True"
+                    Minimum="0"
+                    Value="{Binding ViewModel.AverageGrade, Mode=OneWay}" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

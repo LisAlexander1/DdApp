@@ -1,81 +1,141 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
 using DdApp.Context;
 using DdApp.Extensions;
 using DdApp.Models;
 using Microsoft.EntityFrameworkCore;
+using Wpf.Ui;
 using Wpf.Ui.Controls;
 
 namespace DdApp.ViewModels.Pages;
 
-public abstract partial class FormViewModel<TEntity>(StudentsDbContext studentsDbContext)
+public abstract partial class FormViewModel<TEntity>(StudentsDbContext studentsDbContext, ISnackbarService snackbarService)
     : ObservableObject, INavigationAware where TEntity : class
 {
-    private StudentsDbContext StudentsDbContext { get; } = studentsDbContext;
+    protected abstract string ObjectName { get; }
+    #region Properies
 
-    [ObservableProperty]
-    private int _index;
+    protected StudentsDbContext StudentsDbContext { get; } = studentsDbContext;
+    protected ISnackbarService SnackbarService { get; } = snackbarService;
 
-    [ObservableProperty]
-    private ObservableCollection<Item<TEntity>> _itemsList = [];
+    [ObservableProperty] private int _index;
 
-    [ObservableProperty]
-    private Item<TEntity>? _selectedItem;
+    [ObservableProperty] private bool _saving;
 
-    [ObservableProperty]
-    private bool _isNewItem;
+    [ObservableProperty] private ObservableCollection<Item<TEntity>> _itemsList = [];
 
-    [ObservableProperty]
-    private bool _isDeleteItem;
+    [ObservableProperty] private Item<TEntity>? _selectedItem;
 
-    partial void OnIndexChanged(int oldValue,int newValue)
+    [ObservableProperty] private bool _isNewItem;
+
+    [ObservableProperty] private bool _isCreateForm;
+
+    [ObservableProperty] private bool _isUpdated;
+
+    [ObservableProperty] private bool _isDeleteItem;
+
+    #endregion
+
+    #region Value chages triggres
+
+    partial void OnIndexChanged(int oldValue, int newValue)
     {
-        
+        SaveCurrentForm(oldValue);
+        SelectedItem = ItemsList.ElementAtOrDefault(Index);
+        IsCreateForm = newValue == -1;
     }
 
     partial void OnItemsListChanged(ObservableCollection<Item<TEntity>> value)
     {
-        
+        Index = Math.Min(Index, value.Count - 1);
+        SelectedItem = ItemsList.ElementAtOrDefault(Index);
     }
 
     partial void OnSelectedItemChanged(Item<TEntity>? value)
     {
-        
+        if (value != null)
+        {
+            IsNewItem = value.Created;
+            IsDeleteItem = value.Deleted;
+            IsUpdated = value.Updated;
+            SetFormFromItem(value);
+        }
+        else
+            SetFormNull();
     }
+
+    #endregion
+
+    #region Commands
 
     [RelayCommand]
     private void Add()
     {
-        Index = 0;
+        ItemsList.Add(new Item<TEntity>(CreateItemFromForm(), true));
+        Index = ItemsList.Count - 1;
+        
+        var textInfo = new CultureInfo("ru-RU", false).TextInfo;
+        SnackbarService.Show(
+            title: $"{textInfo.ToTitleCase(ObjectName)} добавлен",
+            message: "Изменения будут внесены после сохранения",
+            ControlAppearance.Info,
+            new SymbolIcon(SymbolRegular.Add24),
+            new TimeSpan(0,0,5));
     }
 
     [RelayCommand]
-    private void Delete(int index)
+    private void Delete()
     {
         IsDeleteItem = !IsDeleteItem;
     }
 
     [RelayCommand]
-    private async Task Save()
+    private void Save()
     {
+        Saving = true;
         SaveCurrentForm(Index);
 
-        var dbSet = StudentsDbContext.Set<TEntity>();
+        Console.WriteLine($"Saving {Index}");
 
-        var createdItems = ItemsList.Where(item => !item.Deleted & item.Created).Select(item => item.Value)
+        var createdItems = ItemsList.Where(item => !item.Deleted && item.Created).Select(item => item.Value)
             .ToList();
 
-        var deletedItems = ItemsList.Where(item => item.Deleted & !item.Created).Select(item => item.Value)
+        var deletedItems = ItemsList.Where(item => item.Deleted && !item.Created).Select(item => item.Value)
             .ToList();
 
-        var updatedItems = ItemsList.Where(item => !item.Deleted & !item.Created & item.Updated).Select(item => item.Value)
+        var updatedItems = ItemsList.Where(item => !item.Deleted && !item.Created)
+            .Select(item => item.Value)
             .ToList();
+
+        try
+        {
+            StudentsDbContext.Set<TEntity>().AddRange(createdItems);
+            StudentsDbContext.Set<TEntity>().RemoveRange(deletedItems);
+            StudentsDbContext.Set<TEntity>().UpdateRange(updatedItems);
+            StudentsDbContext.SaveChanges();
+            
+            SnackbarService.Show(
+                title: "Сохранение",
+                message: "Все изменения сохранены в базе",
+                ControlAppearance.Success,
+                new SymbolIcon(SymbolRegular.Save24),
+                new TimeSpan(0,0,5));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            SnackbarService.Show(
+                title: "Ошибка",
+                message: "Проблема с сохранением данных",
+                ControlAppearance.Danger,
+                new SymbolIcon(SymbolRegular.Dismiss24),
+                new TimeSpan(0,0,5));
+        }
         
-        dbSet.AddRange(createdItems);
-        dbSet.RemoveRange(deletedItems);
-        dbSet.UpdateRange(updatedItems);
-        await StudentsDbContext.SaveChangesAsync();
 
         Update();
+        Saving = false;
     }
 
     [RelayCommand]
@@ -83,7 +143,7 @@ public abstract partial class FormViewModel<TEntity>(StudentsDbContext studentsD
     {
         Index = Math.Min(Index + 1, ItemsList.Count - 1);
     }
-    
+
     [RelayCommand]
     private void DecreaseIndex()
     {
@@ -101,7 +161,7 @@ public abstract partial class FormViewModel<TEntity>(StudentsDbContext studentsD
     {
         Index = ItemsList.Count - 1;
     }
-    
+
     [RelayCommand]
     private void Create()
     {
@@ -109,31 +169,46 @@ public abstract partial class FormViewModel<TEntity>(StudentsDbContext studentsD
     }
 
     [RelayCommand]
-    private void Update()
+    protected virtual void Update()
     {
-        ItemsList = StudentsDbContext.Set<TEntity>().Select((entity) => new Item<TEntity>(entity))
+        ItemsList = StudentsDbContext.Set<TEntity>().Select((entity) => new Item<TEntity>(entity, false))
             .ToObservableCollection();
     }
 
+    #endregion
+
+    #region App Navigation
+
     public virtual void OnNavigatedTo()
     {
-      Update();   
+        Update();
     }
 
     public virtual void OnNavigatedFrom()
     {
-        
     }
 
-    protected virtual void SaveCurrentForm(int index)
+    #endregion
+
+    #region Work with Form
+
+    private void SaveCurrentForm(int index)
     {
         var item = ItemsList.ElementAtOrDefault(index);
         if (item == null) return;
         item.Deleted = IsDeleteItem;
+        item.Created = IsNewItem;
+        item.Updated = IsUpdated;
+        SetItemFromForm(item);
     }
 
-    protected abstract SetValueFromItem()
-    {
-        
-    }
+    protected abstract void SetItemFromForm(Item<TEntity> item);
+
+    protected abstract void SetFormFromItem(Item<TEntity> item);
+
+    protected abstract void SetFormNull();
+
+    protected abstract TEntity CreateItemFromForm();
+
+    #endregion
 }

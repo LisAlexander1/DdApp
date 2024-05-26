@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace DdApp.Entities;
 
+
 public partial class Grades
 {
-    public long? StudentCode { get; set; }
+    public long Code { get; set; }
+    public long StudentCode { get; set; }
 
     public DateOnly? ExamDate1 { get; set; }
 

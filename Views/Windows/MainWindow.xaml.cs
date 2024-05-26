@@ -12,6 +12,7 @@ namespace DdApp.Views.Windows
         public MainWindow(
             MainWindowViewModel viewModel,
             IPageService pageService,
+            ISnackbarService snackbarService,
             INavigationService navigationService
         )
         {
@@ -23,6 +24,7 @@ namespace DdApp.Views.Windows
             InitializeComponent();
             SetPageService(pageService);
 
+            snackbarService.SetSnackbarPresenter(SnackbarPresenter);
             navigationService.SetNavigationControl(RootNavigation);
         }
 

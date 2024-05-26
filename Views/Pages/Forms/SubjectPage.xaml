@@ -1,0 +1,72 @@
+﻿<Page
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
+    Title="StudentPage"
+    d:DataContext="{d:DesignInstance local:SubjectPage,
+                                     IsDesignTimeCreatable=False}"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    x:Class="DdApp.Views.Pages.SubjectPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entities="clr-namespace:DdApp.Entities"
+    xmlns:helpers="clr-namespace:DdApp.Helpers"
+    xmlns:local="clr-namespace:DdApp.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:userControls="clr-namespace:DdApp.Views.Pages.UserControls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
+
+    <Page.Resources>
+        <helpers:DateOnlyToDateTimeConverter x:Key="DateOnlyToDateTimeConverter" />
+        <helpers:IntToDoubleConverter x:Key="IntToDoubleConverter" />
+        <helpers:LongToDoubleConverter x:Key="LongToDoubleConverter" />
+    </Page.Resources>
+    <Grid VerticalAlignment="Top">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <userControls:FormControl
+            AddCommand="{Binding ViewModel.AddCommand}"
+            Count="{Binding ViewModel.ItemsList.Count}"
+            CreateCommand="{Binding ViewModel.CreateCommand}"
+            DecreaseIndexCommand="{Binding ViewModel.DecreaseIndexCommand}"
+            DeleteCommand="{Binding ViewModel.DeleteCommand}"
+            FirstIndexCommand="{Binding ViewModel.FirstIndexCommand}"
+            Grid.Row="0"
+            IncreaseIndexCommand="{Binding ViewModel.IncreaseIndexCommand}"
+            Index="{Binding ViewModel.Index}"
+            IsCreateForm="{Binding ViewModel.IsCreateForm}"
+            IsDeleteItem="{Binding ViewModel.IsDeleteItem}"
+            LastIndexCommand="{Binding ViewModel.LastIndexCommand}"
+            Loading="{Binding ViewModel.Saving}"
+            SaveCommand="{Binding ViewModel.SaveCommand}"
+            Title="Предметы" />
+
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="10,10,20,10">
+                <Label Content="Код предмета" />
+                <xctk:LongUpDown
+                    IsEnabled="False"
+                    Margin="0,0,0,10"
+                    Value="{Binding ViewModel.Code}" />
+
+                <Label Content="Название предмета" />
+                <ui:TextBox Margin="0,0,0,10" Text="{Binding ViewModel.Name}" />
+
+                <Label Content="Описание предмета" />
+                <ui:TextBox
+                    Margin="0,0,0,10"
+                    Text="{Binding ViewModel.Description}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

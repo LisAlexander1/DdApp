@@ -24,7 +24,7 @@ namespace DdApp.ViewModels.Pages
         private void InitializeViewModel()
         {
             CurrentTheme = ApplicationThemeManager.GetAppTheme();
-            AppVersion = $"UiDesktopApp1 - {GetAssemblyVersion()}";
+            AppVersion = $"Студенты - {GetAssemblyVersion()}";
 
             _isInitialized = true;
         }
