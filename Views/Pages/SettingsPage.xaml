@@ -24,7 +24,7 @@
         <TextBlock
             FontSize="20"
             FontWeight="Medium"
-            Text="Personalization" />
+            Text="Персонализация" />
         <TextBlock Margin="0,12,0,0" Text="Тема" />
         <RadioButton
             Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
@@ -45,7 +45,7 @@
             FontSize="20"
             FontWeight="Medium"
             Margin="0,24,0,0"
-            Text="About DdApp" />
+            Text="О приложении" />
         <TextBlock Margin="0,12,0,0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
     </StackPanel>
 </Page>
